@@ -1,131 +1,97 @@
-import { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { Notebook, NotebookText, Plus, SearchX } from "lucide-react";
+import { Button } from "app.old/components/ui/button";
+import { Notebook, NotebookText, Plus } from "lucide-react";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { Button } from "~/components/ui/button";
+import Container2xl from "~/components/container-2xl";
 import { Input } from "~/components/ui/input";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { Notes } from "~/db/db.notes";
-import { db } from "~/db/db.server";
-import { noteThemes } from "~/utils/note.themes";
+import { getNotes } from "~/db";
+import { cn } from "~/lib/utils";
 
-export const meta: MetaFunction = () => {
-  return [{ title: "Notes App" }];
-};
+export const meta: MetaFunction = () => [
+  { title: "Notes" },
+  {
+    name: "description",
+    content: "Cobalah buat dan simpan catatan mu di sini!",
+  },
+];
 
-export const loader = async () => {
-  return await db.notes.findMany();
-};
+export const clientLoader = async () => await getNotes();
 
-export default function IndexNotes() {
-  const loaderData = useLoaderData<Notes[]>();
+export default function Notes() {
+  const loaderData = useLoaderData<typeof clientLoader>();
 
-  const [cariJudulNote, setCariJudulNote] = useState("");
+  const [namaCatatan, setNamaCatatan] = useState("");
 
-  function filterNotes() {
-    return loaderData.filter((f) => {
-      return f.title.toLowerCase().includes(cariJudulNote.toLowerCase());
-    });
+  function cariCatatan() {
+    return loaderData.filter((f) =>
+      f.title.toLowerCase().includes(namaCatatan.toLowerCase()),
+    );
   }
 
-  const RenderNotes = () => {
-    if (filterNotes().length === 0 && cariJudulNote) {
+  const AllNotes = ({ className }: { className?: string }) => {
+    if (cariCatatan().length === 0 && namaCatatan) {
       return (
-        <div className="select-none opacity-60 grow flex flex-col items-center justify-center gap-4">
-          <SearchX className="size-12" />
-          <h1>Tidak di temukan hasil dari pencarian</h1>
+        <div
+          className={cn(
+            className,
+            "grid h-full place-content-center gap-4 text-neutral-400",
+          )}
+        >
+          no catatan, no search
         </div>
       );
     }
 
-    if (filterNotes().length === 0) {
+    if (cariCatatan().length === 0) {
       return (
-        <div className="select-none opacity-60 grow flex flex-col items-center justify-center gap-4">
-          <NotebookText className="size-12" />
-          <h1>Belum ada catatan di sini</h1>
+        <div
+          className={cn(
+            className,
+            "grid h-full place-content-center gap-4 text-neutral-400",
+          )}
+        >
+          <NotebookText className="mx-auto size-12" />
+          <p>Belum ada catatan di sini</p>
         </div>
       );
     }
 
     return (
       <ScrollArea>
-        <div className="grid sm:grid-cols-3 grid-cols-2 flex-wrap gap-4 p-4 overflow-auto">
-          {filterNotes().map((m, key) => {
-            return <NoteCard notes_data={m} key={key} />;
-          })}
-        </div>
+        <div className={cn(className)}>tes</div>
       </ScrollArea>
     );
   };
 
-  const NoteCard = ({ notes_data }: { notes_data: Notes }) => {
-    const { text_color, bg_color } = noteThemes[notes_data.theme];
-
-    return (
-      <Link
-        to={"/" + notes_data.note_id}
-        className={twMerge(
-          text_color,
-          bg_color,
-          "rounded-md p-4 grid gap-2 shadow border"
-        )}
-      >
-        <h1
-          title={notes_data.title.split(/\s+/).slice(0, 6).join(" ") + "..."}
-          className="capitalize font-semibold truncate"
-        >
-          {notes_data.title}
-        </h1>
-        <p
-          title={notes_data.content.split(/\s+/).slice(0, 15).join(" ") + "..."}
-          className="text-sm whitespace-pre-wrap overflow-hidden"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {notes_data.content}
-        </p>
-      </Link>
-    );
-  };
-
   return (
-    <div className="w-svw h-svh max-w-screen-sm mx-auto flex flex-col relative">
-      <div className="sticky top-0 p-4 flex items-center gap-4 justify-between bg-white">
-        <div className="md:flex gap-2 truncate hidden select-none items-center">
-          <Notebook className="min-w-fit" />
-          <h1 className="text-lg">Notes App</h1>
+    <Container2xl className="flex h-svh flex-col">
+      {/* navbar */}
+      <nav className="sticky top-0 flex justify-between gap-4 p-4">
+        <div className="hidden items-center gap-2 sm:flex">
+          <Notebook />
+          <h1 className="text-lg">Notes</h1>
         </div>
 
-        <div className="flex gap-2 md:w-fit w-full">
+        <div className="flex w-full gap-4 sm:w-fit">
           <Input
-            onChange={({ target }) => setCariJudulNote(target.value)}
-            title="cari catatan"
-            placeholder="Cari catatan"
             type="search"
+            placeholder="Cari Catatan"
+            className="truncate duration-150 ease-in-out"
+            onChange={({ target }) => setNamaCatatan(target.value)}
           />
 
-          <Link to="/create" className="hidden md:block">
-            <Button title="buat catatan baru">
+          <Button variant="outline" asChild>
+            <Link to="/create">
               <Plus />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
-      </div>
+      </nav>
 
-      <RenderNotes />
-
-      <Link
-        to="/create"
-        className="md:hidden block absolute bottom-10 right-10 shadow-lg"
-      >
-        <Button title="buat catatan baru">
-          <Plus />
-        </Button>
-      </Link>
-    </div>
+      {/* All Notes */}
+      <AllNotes className="select-none" />
+    </Container2xl>
   );
 }
