@@ -1,6 +1,7 @@
 import { vitePlugin as remix } from "@remix-run/dev";
-import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { remixPWA } from "@remix-pwa/dev";
+import { defineConfig } from "vite";
 import path from "path";
 
 declare module "@remix-run/node" {
@@ -16,6 +17,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    remixPWA(),
     remix({
       ssr: false,
 
@@ -31,5 +33,9 @@ export default defineConfig({
   ],
   ssr: {
     noExternal: ["problematic-dependency"],
+  },
+  build: {
+    emptyOutDir: true,
+    outDir: "build",
   },
 });

@@ -1,3 +1,3 @@
 # Simple Notes
 
-Ini adalah aplikasi catatan sederhana dan bisa di akses langsung dengan browser
+Aplikasi catatan sederhana dan bisa di akses langsung dengan browser dengan dukungan PWA (Progressive Web App)

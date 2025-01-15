@@ -1,0 +1,35 @@
+{
+  "short_name": "Simple Notes",
+  "name": "Aplikasi catatan sederhana dan bisa di akses langsung dengan browser dengan dukungan PWA (Progressive Web App)",
+  "icons": [
+    {
+      "src": "app-16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "app-32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "app-64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "app-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "app-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
