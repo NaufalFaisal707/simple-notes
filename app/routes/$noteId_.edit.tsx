@@ -1,0 +1,111 @@
+import {
+  ClientActionFunctionArgs,
+  ClientLoaderFunctionArgs,
+  Link,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
+import { Button } from "~/components/ui/button";
+import { Textarea } from "~/components/ui/textarea";
+import { ChevronLeft, NotebookText } from "lucide-react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import Container2xl from "~/components/container-2xl";
+import { Input } from "~/components/ui/input";
+import { getNoteById, updateNoteById } from "~/db";
+
+export const clientAction = async ({
+  request,
+  params,
+}: ClientActionFunctionArgs) => {
+  const { noteId } = params as { noteId: string };
+
+  if (request.method !== "PUT") {
+    return Response.json(null, { status: 405, statusText: "gk bolejh" });
+  }
+
+  const { title, content } = Object.fromEntries(await request.formData()) as {
+    title: string;
+    content: string;
+  };
+
+  await updateNoteById(noteId, { title, content });
+
+  return true;
+};
+
+export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
+  const { noteId } = params as { noteId: string };
+
+  const targetNote = await getNoteById(noteId);
+
+  if (!targetNote) {
+    throw Response.json(null, { status: 404, statusText: "ngawor" });
+  }
+
+  return targetNote;
+};
+
+export const ErrorBoundary = () => {
+  return <h1>Error kang!</h1>;
+};
+
+export default function EditNote() {
+  const loaderData = useLoaderData<typeof clientLoader>();
+
+  const fetcher = useFetcher();
+
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  const [typing, setTyping] = useState<FormEvent<HTMLFormElement>>();
+
+  function autoSubmit() {
+    fetcher.submit(formRef.current!, { method: "PUT" });
+  }
+
+  useEffect(() => {
+    if (!typing) return;
+    const typingTimeout = setTimeout(autoSubmit, 1000);
+    return () => clearTimeout(typingTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typing]);
+
+  return (
+    <Container2xl className="flex h-svh flex-col">
+      {/* navbar */}
+      <nav className="sticky top-0 flex justify-between gap-4 bg-white p-4">
+        <Button variant="outline" asChild>
+          <Link to="/">
+            <ChevronLeft />
+          </Link>
+        </Button>
+
+        <Button variant="outline" title="Lihat catatan" asChild>
+          <Link to={"/" + loaderData.note_id}>
+            <NotebookText />
+          </Link>
+        </Button>
+      </nav>
+
+      {/* Note Form */}
+      <fetcher.Form
+        ref={formRef}
+        onInput={setTyping}
+        className="flex h-full flex-col gap-4 p-4"
+      >
+        <Input
+          defaultValue={loaderData.title}
+          name="title"
+          placeholder="Judul"
+          className="outline-0"
+        />
+        <Textarea
+          defaultValue={loaderData.content}
+          name="content"
+          spellCheck="false"
+          placeholder="Ketik Catatan"
+          className="h-full resize-none whitespace-pre-line outline-0"
+        />
+      </fetcher.Form>
+    </Container2xl>
+  );
+}
