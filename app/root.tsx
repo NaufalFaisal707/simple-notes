@@ -4,7 +4,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { LinksFunction } from "@remix-run/node";
 
 import tailwind from "./tailwind.css?url";
@@ -46,7 +48,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const location = useLocation();
+
+  return (
+    <div className="overflow-hidden">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{
+          type: "spring",
+          visualDuration: 0.3,
+          bounce: 0.4,
+        }}
+      >
+        <AnimatePresence mode="wait">
+          <Outlet />
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
 }
 
 export function HydrateFallback() {

@@ -80,11 +80,11 @@ export default function Home() {
         <h1
           className={cn(
             title ? "" : "text-neutral-400",
-            "truncate font-semibold capitalize",
+            "truncate font-semibold",
           )}
           title={title}
         >
-          {title || "- tanpa judul -"}
+          {title || "- Tanpa Judul -"}
         </h1>
       </Link>
     );

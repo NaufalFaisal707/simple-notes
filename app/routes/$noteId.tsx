@@ -5,13 +5,7 @@ import {
   redirect,
   useLoaderData,
 } from "@remix-run/react";
-import {
-  ChevronLeft,
-  Menu,
-  PencilLine,
-  SwatchBook,
-  Trash2,
-} from "lucide-react";
+import { ChevronLeft, Menu, PencilLine, Trash2 } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkEmoji from "remark-emoji";
@@ -94,15 +88,6 @@ export default function TargetNote() {
               Edit
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              to={"/" + loaderData.note_id + "/edit"}
-              className="flex items-center gap-2"
-            >
-              <SwatchBook />
-              Tema
-            </Link>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
@@ -150,11 +135,11 @@ export default function TargetNote() {
         <h1
           className={cn(
             loaderData.title ? "" : "text-neutral-400",
-            "truncate text-lg capitalize",
+            "truncate text-lg",
           )}
           title={loaderData.title}
         >
-          {loaderData.title || "- tanpa judul -"}
+          {loaderData.title || "- Tanpa Judul -"}
         </h1>
 
         {DropdownMenuComponents}
@@ -170,8 +155,8 @@ export default function TargetNote() {
           </Markdown>
         </div>
       ) : (
-        <span className="select-none p-4 capitalize text-neutral-400">
-          - tanpa deskripsi -
+        <span className="select-none p-4 text-neutral-400">
+          - Tanpa Deskripsi -
         </span>
       )}
     </Container2xl>
