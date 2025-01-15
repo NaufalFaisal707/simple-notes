@@ -36,12 +36,14 @@ export default function NewNote() {
   return (
     <Container2xl className="flex h-svh flex-col">
       {/* navbar */}
-      <nav className="sticky top-0 flex justify-between gap-4 bg-white bg-opacity-80 p-4 backdrop-blur">
+      <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white bg-opacity-80 p-4 backdrop-blur">
         <Button variant="outline" asChild>
           <Link to="/">
             <ChevronLeft />
           </Link>
         </Button>
+
+        <h1>Buat Catatan</h1>
 
         <Button variant="outline" title="Simpan catatan" onClick={autoSubmit}>
           <Save />

@@ -72,12 +72,14 @@ export default function EditNote() {
   return (
     <Container2xl className="flex h-svh flex-col">
       {/* navbar */}
-      <nav className="sticky top-0 flex justify-between gap-4 bg-white p-4">
+      <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white p-4">
         <Button variant="outline" asChild>
           <Link to="/">
             <ChevronLeft />
           </Link>
         </Button>
+
+        <h1>Edit Catatan</h1>
 
         <Button variant="outline" title="Lihat catatan" asChild>
           <Link to={"/" + loaderData.note_id}>

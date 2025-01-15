@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkEmoji from "remark-emoji";
 import Container2xl from "~/components/container-2xl";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -138,9 +139,9 @@ export default function TargetNote() {
   );
 
   return (
-    <Container2xl className="flex h-svh flex-col">
+    <Container2xl className="flex h-svh flex-col overflow-hidden">
       {/* navbar */}
-      <nav className="sticky top-0 flex items-center justify-between gap-4 bg-white p-4">
+      <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white p-4">
         <Button variant="outline" asChild title="Semua catatan">
           <Link to="/">
             <ChevronLeft />
@@ -158,24 +159,14 @@ export default function TargetNote() {
         </h1>
 
         {DropdownMenuComponents}
-
-        {/* <div className="flex gap-4">
-          <Button variant="outline" title="Edit catatan" asChild>
-            <Link to={"/" + loaderData.note_id + "/edit"}>
-              <PencilLine />
-            </Link>
-          </Button>
-          <Button variant="outline" title="Edit catatan" asChild>
-            <Link to={"/" + loaderData.note_id + "/edit"}>
-              <PencilLine />
-            </Link>
-          </Button>
-        </div> */}
       </nav>
 
       {loaderData.content ? (
         <ScrollArea>
-          <Markdown className="prose p-4" remarkPlugins={[remarkGfm]}>
+          <Markdown
+            remarkPlugins={[remarkGfm, remarkEmoji]}
+            className="prose p-4"
+          >
             {loaderData.content}
           </Markdown>
         </ScrollArea>
