@@ -5,7 +5,6 @@ import { Notebook, NotebookText, Plus, SearchX } from "lucide-react";
 import { useState } from "react";
 import Container2xl from "~/components/container-2xl";
 import { Input } from "~/components/ui/input";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { getNotes, Note } from "~/db";
 import { cn } from "~/lib/utils";
 
@@ -60,15 +59,16 @@ export default function Home() {
     }
 
     return (
-      <ScrollArea>
-        <div
-          className={cn(className, "grid grid-cols-2 gap-4 p-4 md:grid-cols-3")}
-        >
-          {cariCatatan().map((m, key) => (
-            <NoteCard key={key} note={m} />
-          ))}
-        </div>
-      </ScrollArea>
+      <div
+        className={cn(
+          className,
+          "grid grid-cols-2 gap-4 overflow-auto p-4 md:grid-cols-3",
+        )}
+      >
+        {cariCatatan().map((m, key) => (
+          <NoteCard key={key} note={m} />
+        ))}
+      </div>
     );
   };
 

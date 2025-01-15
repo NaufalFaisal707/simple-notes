@@ -17,7 +17,6 @@ import remarkGfm from "remark-gfm";
 import remarkEmoji from "remark-emoji";
 import Container2xl from "~/components/container-2xl";
 import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { deleteNoteById, getNoteById } from "~/db";
 import { cn } from "~/lib/utils";
 import {
@@ -162,14 +161,14 @@ export default function TargetNote() {
       </nav>
 
       {loaderData.content ? (
-        <ScrollArea>
+        <div className="overflow-auto">
           <Markdown
             remarkPlugins={[remarkGfm, remarkEmoji]}
             className="prose p-4"
           >
             {loaderData.content}
           </Markdown>
-        </ScrollArea>
+        </div>
       ) : (
         <span className="select-none p-4 capitalize text-neutral-400">
           - tanpa deskripsi -
