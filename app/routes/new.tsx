@@ -1,6 +1,7 @@
 import {
   ClientActionFunctionArgs,
   Link,
+  MetaFunction,
   redirect,
   useFetcher,
 } from "@remix-run/react";
@@ -10,8 +11,9 @@ import Container2xl from "~/components/container-2xl";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-
 import { addNote } from "~/db";
+
+export const meta: MetaFunction = () => [{ title: "Buat Catatan" }];
 
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const { title, content } = Object.fromEntries(await request.formData()) as {

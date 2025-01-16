@@ -1,5 +1,8 @@
+import { MetaFunction } from "@remix-run/react";
 import { PanelsTopLeft } from "lucide-react";
 import Container2xl from "~/components/container-2xl";
+
+export const meta: MetaFunction = () => [{ title: "Halaman Tidak Ditemukan" }];
 
 export default function UnknownPage() {
   return (

@@ -30,6 +30,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import { MetaArgs } from "@remix-run/node";
+
+export const meta = ({ data }: MetaArgs & { data: { title: string } }) => {
+  if (!data) {
+    return [{ title: "Catatan Tidak Ditemukan" }];
+  }
+
+  return [{ title: data.title }];
+};
 
 export const clientAction = async ({
   request,

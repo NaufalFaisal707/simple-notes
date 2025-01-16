@@ -2,6 +2,7 @@ import {
   ClientActionFunctionArgs,
   ClientLoaderFunctionArgs,
   Link,
+  MetaFunction,
   useFetcher,
   useLoaderData,
 } from "@remix-run/react";
@@ -12,6 +13,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Container2xl from "~/components/container-2xl";
 import { Input } from "~/components/ui/input";
 import { getNoteById, updateNoteById } from "~/db";
+
+export const meta: MetaFunction = () => [{ title: "Edit Catatan" }];
 
 export const clientAction = async ({
   request,
