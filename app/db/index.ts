@@ -17,8 +17,8 @@ export interface NoteDBSchema extends DBSchema {
 
 export type Note = {
   note_id?: string;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   theme?: NoteTheme;
   created_at?: string | number | Date;
   update_at?: string | number | Date;
@@ -65,7 +65,7 @@ export async function getNoteById(id: string) {
 
 export async function updateNoteById(
   note_id: string,
-  { title, content }: { title: string; content: string },
+  { title, content }: { title?: string; content?: string },
 ) {
   const update_at = new Date();
 

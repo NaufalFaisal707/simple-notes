@@ -8,11 +8,12 @@ import {
 } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
-import { ChevronLeft, NotebookText } from "lucide-react";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { ChevronLeft, Save } from "lucide-react";
+import { useRef } from "react";
 import Container2xl from "~/components/container-2xl";
 import { Input } from "~/components/ui/input";
 import { getNoteById, updateNoteById } from "~/db";
+import { redirect } from "@remix-pwa/sw";
 
 export const meta: MetaFunction = () => [{ title: "Edit Catatan" }];
 
@@ -31,9 +32,12 @@ export const clientAction = async ({
     content: string;
   };
 
-  await updateNoteById(noteId, { title, content });
+  await updateNoteById(noteId, {
+    ...(title ? { title } : {}),
+    ...(content ? { content } : {}),
+  });
 
-  return true;
+  return redirect("/" + noteId);
 };
 
 export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
@@ -59,18 +63,9 @@ export default function EditNote() {
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const [typing, setTyping] = useState<FormEvent<HTMLFormElement>>();
-
-  function autoSubmit() {
+  function updateNote() {
     fetcher.submit(formRef.current!, { method: "PUT" });
   }
-
-  useEffect(() => {
-    if (!typing) return;
-    const typingTimeout = setTimeout(autoSubmit, 1000);
-    return () => clearTimeout(typingTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typing]);
 
   return (
     <Container2xl className="flex h-svh flex-col">
@@ -84,19 +79,13 @@ export default function EditNote() {
 
         <h1>Edit Catatan</h1>
 
-        <Button variant="outline" title="Lihat catatan" asChild>
-          <Link to={"/" + loaderData.note_id}>
-            <NotebookText />
-          </Link>
+        <Button variant="outline" title="Simpan Catatan" onClick={updateNote}>
+          <Save />
         </Button>
       </nav>
 
       {/* Note Form */}
-      <fetcher.Form
-        ref={formRef}
-        onInput={setTyping}
-        className="flex h-full flex-col gap-4 p-4"
-      >
+      <fetcher.Form ref={formRef} className="flex h-full flex-col gap-4 p-4">
         <Input
           defaultValue={loaderData.title}
           name="title"

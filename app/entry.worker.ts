@@ -68,6 +68,11 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
 
 declare let self: ServiceWorkerGlobalScope;
 
+self.addEventListener("beforeinstallprompt", (event) => {
+  logger.log("Service worker beforeinstallprompt triggered");
+  event.preventDefault();
+});
+
 self.addEventListener("install", (event) => {
   logger.log("Service worker installed");
 

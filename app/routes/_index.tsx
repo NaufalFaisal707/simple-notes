@@ -25,7 +25,7 @@ export default function Home() {
 
   function cariCatatan() {
     return loaderData.filter((f) =>
-      f.title.toLowerCase().includes(namaCatatan.toLowerCase()),
+      f.title?.toLowerCase().includes(namaCatatan?.toLowerCase()),
     );
   }
 

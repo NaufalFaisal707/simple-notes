@@ -17,7 +17,6 @@ import { sendSkipWaitingMessage, useSWEffect } from "@remix-pwa/sw";
 import { usePWAManager } from "@remix-pwa/client";
 import { toast, Toaster } from "sonner";
 import { useEffect } from "react";
-import { Button } from "./components/ui/button";
 
 export const links: LinksFunction = () => [
   {
@@ -40,11 +39,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
       <head>
+        <Meta />
         <meta charSet="utf-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="manifest" href="/manifest.json" />
-        <Meta />
         <Links />
       </head>
       <body>
@@ -101,16 +100,11 @@ export default function App() {
     if (!swUpdate) return;
 
     if (swUpdate.isUpdateAvailable) {
-      toast.info("Update Tersedia", {
+      toast("Update Tersedia", {
         id: "note-update",
-        description: "Tekan tombol untuk memuat ulang aplikasi",
         duration: Infinity,
         action: {
-          label: (
-            <Button asChild variant="outline" size="sm">
-              <span>Update Aplikasi</span>
-            </Button>
-          ),
+          label: <span>Update Aplikasi</span>,
           onClick: () => {
             sendSkipWaitingMessage(swUpdate.newWorker!);
             window.location.reload();
