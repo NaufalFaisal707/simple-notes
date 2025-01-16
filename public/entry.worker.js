@@ -68,7 +68,7 @@ const _Logger = class _Logger {
 };
 __publicField(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
 let Logger = _Logger;
-new Logger();
+const logger$1 = new Logger();
 const clearUpOldCaches = async (e, c) => (e = e.map((e2) => `${e2}-${c}`), caches.keys().then((c2) => Promise.all([e.forEach((e2) => {
   const { cacheActualName: a } = getCacheNameAndVersion(e2);
   c2.filter((c3) => c3.startsWith(a) && c3 !== e2).forEach((e3) => {
@@ -114,6 +114,60 @@ function isDocumentRequest(e) {
   return isMethod$1(e, ["get"]) && "navigate" === e.mode;
 }
 const isHttpRequest = (e) => e instanceof Request ? e.url.startsWith("http") : e.toString().startsWith("http");
+const _MessageHandler = class _MessageHandler {
+  constructor(e) {
+    __publicField(this, "eventName");
+    this.eventName = e;
+  }
+  bind(e) {
+    _MessageHandler.messageHandlers[this.eventName] = e;
+  }
+  async handleMessage(e) {
+    const { data: s } = e;
+    if ("object" == typeof s && s.type && _MessageHandler.messageHandlers[s.type]) try {
+      await _MessageHandler.messageHandlers[s.type](e);
+    } catch (e2) {
+      logger$1.error(`Error handling message of type ${s.type}:`, e2);
+    }
+  }
+};
+__publicField(_MessageHandler, "messageHandlers", {});
+let MessageHandler = _MessageHandler;
+class NavigationHandler extends MessageHandler {
+  constructor(e) {
+    super("REMIX_NAVIGATION");
+    __publicField(this, "allowList");
+    __publicField(this, "denyList");
+    __publicField(this, "documentCache");
+    __publicField(this, "logger");
+    this.allowList = e.allowList || [], this.denyList = e.denyList || [], this.documentCache = e.cache, this.logger = e.logger || logger$1, this.bind(this.handleNavigation.bind(this));
+  }
+  async handleNavigation(e) {
+    const { data: t } = e, { isSsr: o, location: s } = t.payload, r = s.pathname + s.search + s.hash;
+    if (!(this.allowList.length > 0 && !this.allowList.some((e2) => r.match(e2)) || this.denyList.length > 0 && this.denyList.some((e2) => r.match(e2)))) try {
+      if (!await this.documentCache.match(r) && "CacheOnly" !== this.documentCache.strategy.constructor.name) {
+        this.logger.debug(`Document request for ${r} not found in cache. Fetching from server...`);
+        const e2 = await fetch(r).catch((e3) => {
+          this.logger.error(`Error fetching document for ${r}:`, e3);
+        });
+        if (!e2) return;
+        return await this.documentCache.addToCache(r, e2.clone());
+      }
+      o && (this.logger.setLogLevel("warn"), this.logger.log(`Document request for ${r} handled.`), this.logger.setLogLevel("debug"));
+    } catch (e2) {
+      this.logger.error(`Error handling document request for ${r}:`, e2);
+    }
+  }
+}
+class SkipWaitHandler extends MessageHandler {
+  constructor() {
+    super("SKIP_WAITING"), this.bind(this.skipWaiting.bind(this));
+  }
+  async skipWaiting(s) {
+    const { data: i } = s;
+    "SKIP_WAITING" === i.type && self.skipWaiting();
+  }
+}
 const CACHE_TIMESTAMP_HEADER = "sw-cache-timestamp";
 class BaseStrategy {
   constructor(e, t = { maxEntries: 50, matchOptions: {} }) {
@@ -4779,7 +4833,7 @@ class EnhancedCache {
 const logger = new Logger({
   prefix: "[Simple Notes]"
 });
-const version = "v1";
+const version = "v2";
 const DOCUMENT_CACHE_NAME = `document-cache`;
 const ASSET_CACHE_NAME = `asset-cache`;
 const DATA_CACHE_NAME = `data-cache`;
@@ -4824,11 +4878,14 @@ const defaultFetchHandler = async ({ context }) => {
 self.addEventListener("install", (event) => {
   logger.log("Service worker installed");
   event.waitUntil(
-    assetCache.preCacheUrls(
-      self.__workerManifest.assets.filter(
-        (url) => !url.endsWith(".map") && !url.endsWith(".js")
-      )
-    )
+    Promise.all([
+      assetCache.preCacheUrls(
+        self.__workerManifest.assets.filter(
+          (url) => !url.endsWith(".map") && !url.endsWith(".js")
+        )
+      ),
+      self.skipWaiting()
+    ])
   );
 });
 self.addEventListener("activate", (event) => {
@@ -4840,6 +4897,21 @@ self.addEventListener("activate", (event) => {
         version
       ),
       self.clients.claim()
+    ])
+  );
+});
+const messageHandler = new NavigationHandler({
+  cache: documentCache
+});
+const skipHandler = new SkipWaitHandler();
+self.addEventListener("message", (event) => {
+  event.waitUntil(messageHandler.handleMessage(event));
+});
+self.addEventListener("message", (event) => {
+  event.waitUntil(
+    Promise.all([
+      messageHandler.handleMessage(event),
+      skipHandler.handleMessage(event)
     ])
   );
 });

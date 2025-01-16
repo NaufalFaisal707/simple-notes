@@ -18,6 +18,7 @@ import { usePWAManager } from "@remix-pwa/client";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { useEffect } from "react";
+import { Button } from "./components/ui/button";
 
 export const links: LinksFunction = () => [
   {
@@ -50,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <Toaster position="top-right" />
+        <Toaster position="top-right" closeButton />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -105,9 +106,13 @@ export default function App() {
       toast.info("Update Tersedia", {
         id: "note-update",
         description: "Tekan tombol untuk memuat ulang aplikasi",
-        closeButton: true,
+        duration: Infinity,
         action: {
-          label: "Update Aplikasi",
+          label: (
+            <Button asChild variant="outline" size="sm">
+              <span>Update Aplikasi</span>
+            </Button>
+          ),
           onClick: () => {
             sendSkipWaitingMessage(swUpdate.newWorker!);
             window.location.reload();
