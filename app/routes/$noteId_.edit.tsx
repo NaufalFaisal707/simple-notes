@@ -73,7 +73,7 @@ export default function EditNote() {
     <Container2xl className="flex h-svh flex-col">
       {/* navbar */}
       <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white p-4">
-        <Button variant="outline" asChild>
+        <Button variant="outline" asChild title="Semua Catatan">
           <Link to="/">
             <ChevronLeft />
           </Link>

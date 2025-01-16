@@ -1,15 +1,23 @@
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
+  useRouteError,
 } from "@remix-run/react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LinksFunction } from "@remix-run/node";
-
 import tailwind from "./tailwind.css?url";
+import { NotepadTextDashed, HeartCrack } from "lucide-react";
+import Container2xl from "./components/container-2xl";
+import { sendSkipWaitingMessage, useSWEffect } from "@remix-pwa/sw";
+import { usePWAManager } from "@remix-pwa/client";
+import { toast } from "sonner";
+import { Toaster } from "./components/ui/sonner";
+import { useEffect } from "react";
 
 export const links: LinksFunction = () => [
   {
@@ -33,15 +41,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="id">
       <head>
         <Meta />
-
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         <Links />
       </head>
       <body>
         {children}
+        <Toaster position="top-right" />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -49,8 +58,64 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <Container2xl className="flex h-svh flex-col">
+        <div className="grid h-full place-content-center gap-2 text-center text-neutral-400">
+          <NotepadTextDashed className="mx-auto size-12" />
+          <p>{error.statusText}</p>
+        </div>
+      </Container2xl>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <Container2xl className="flex h-svh flex-col">
+        <div className="grid h-full place-content-center gap-2 text-center text-neutral-400">
+          <HeartCrack className="mx-auto size-12" />
+          <p>{error.message}</p>
+        </div>
+      </Container2xl>
+    );
+  } else {
+    return (
+      <Container2xl className="flex h-svh flex-col">
+        <div className="grid h-full place-content-center gap-2 text-center text-neutral-400">
+          <HeartCrack className="mx-auto size-12" />
+          <p>Aplikasi Catatan Rusak</p>
+        </div>
+      </Container2xl>
+    );
+  }
+};
+
 export default function App() {
+  useSWEffect();
+
   const location = useLocation();
+
+  const { swUpdate } = usePWAManager();
+
+  useEffect(() => {
+    if (!swUpdate) return;
+
+    if (swUpdate.isUpdateAvailable) {
+      toast.info("Update Tersedia", {
+        id: "note-update",
+        description: "Tekan tombol untuk memuat ulang aplikasi",
+        closeButton: true,
+        action: {
+          label: "Update Aplikasi",
+          onClick: () => {
+            sendSkipWaitingMessage(swUpdate.newWorker!);
+            window.location.reload();
+          },
+        },
+      });
+    }
+  }, [swUpdate, swUpdate.isUpdateAvailable, swUpdate.newWorker]);
 
   return (
     <div className="overflow-hidden">

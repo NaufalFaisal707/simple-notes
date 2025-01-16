@@ -55,14 +55,13 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   const targetNote = await getNoteById(noteId);
 
   if (!targetNote) {
-    throw Response.json(null, { status: 404, statusText: "ngawor" });
+    throw Response.json(null, {
+      status: 404,
+      statusText: "Catatan Tidak Di Temukan",
+    });
   }
 
   return targetNote;
-};
-
-export const ErrorBoundary = () => {
-  return <h1>Error kang!</h1>;
 };
 
 export default function TargetNote() {
@@ -126,7 +125,7 @@ export default function TargetNote() {
     <Container2xl className="flex h-svh flex-col overflow-hidden">
       {/* navbar */}
       <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white p-4">
-        <Button variant="outline" asChild title="Semua catatan">
+        <Button variant="outline" asChild title="Semua Catatan">
           <Link to="/">
             <ChevronLeft />
           </Link>

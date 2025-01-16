@@ -37,7 +37,7 @@ export default function NewNote() {
     <Container2xl className="flex h-svh flex-col">
       {/* navbar */}
       <nav className="sticky top-0 flex select-none items-center justify-between gap-4 bg-white bg-opacity-80 p-4 backdrop-blur">
-        <Button variant="outline" asChild>
+        <Button variant="outline" asChild title="Semua Catatan">
           <Link to="/">
             <ChevronLeft />
           </Link>

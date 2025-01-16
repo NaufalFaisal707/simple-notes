@@ -93,7 +93,7 @@ export default function Home() {
   return (
     <Container2xl className="flex h-svh flex-col">
       {/* navbar */}
-      <nav className="sticky top-0 flex justify-between gap-4 bg-white bg-opacity-80 p-4 backdrop-blur">
+      <nav className="sticky top-0 flex select-none justify-between gap-4 bg-white bg-opacity-80 p-4 backdrop-blur">
         <div className="hidden items-center gap-2 sm:flex">
           <Notebook />
           <h1 className="text-lg">Notes</h1>
