@@ -13,7 +13,11 @@ import type { LinksFunction } from "@remix-run/node";
 import tailwind from "./tailwind.css?url";
 import { NotepadTextDashed, HeartCrack } from "lucide-react";
 import Container2xl from "./components/container-2xl";
-import { sendSkipWaitingMessage, useSWEffect } from "@remix-pwa/sw";
+import {
+  ManifestLink,
+  sendSkipWaitingMessage,
+  useSWEffect,
+} from "@remix-pwa/sw";
 import { usePWAManager } from "@remix-pwa/client";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
@@ -43,10 +47,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <Meta />
         <meta charSet="utf-8" />
-        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        <ManifestLink manifestUrl="/manifest.json" />
         <Links />
       </head>
       <body>

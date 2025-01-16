@@ -17,10 +17,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    remixPWA(),
     remix({
       ssr: false,
-
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
@@ -30,6 +28,9 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
+    remixPWA({
+      workerMinify: true,
+    }),
   ],
   ssr: {
     noExternal: ["problematic-dependency"],

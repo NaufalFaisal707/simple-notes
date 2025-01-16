@@ -1,4 +1,5 @@
 import {
+  ClientActionFunctionArgs,
   ClientLoaderFunctionArgs,
   Form,
   Link,
@@ -43,7 +44,7 @@ export const meta = ({ data }: MetaArgs & { data: { title: string } }) => {
 export const clientAction = async ({
   request,
   params,
-}: ClientLoaderFunctionArgs) => {
+}: ClientActionFunctionArgs) => {
   const { noteId } = params as { noteId: string };
 
   if (request.method !== "DELETE") {
