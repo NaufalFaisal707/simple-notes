@@ -14,9 +14,6 @@
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-dropdown-menu": "^2.1.4",
     "@radix-ui/react-slot": "^1.1.1",
-    "@remix-pwa/client": "^3.0.7",
-    "@remix-pwa/sw": "^3.0.10",
-    "@remix-pwa/worker-runtime": "^2.1.4",
     "@remix-run/node": "^2.15.2",
     "@remix-run/react": "^2.15.2",
     "class-variance-authority": "^0.7.1",
@@ -39,7 +36,6 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^3.1.0",
     "@remix-run/dev": "^2.15.2",
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^18.2.20",

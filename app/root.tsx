@@ -5,7 +5,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLocation,
   useRouteError,
 } from "@remix-run/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,10 +12,6 @@ import type { LinksFunction } from "@remix-run/node";
 import tailwind from "./tailwind.css?url";
 import { NotepadTextDashed, HeartCrack } from "lucide-react";
 import Container2xl from "./components/container-2xl";
-import { sendSkipWaitingMessage, useSWEffect } from "@remix-pwa/sw";
-import { usePWAManager } from "@remix-pwa/client";
-import { toast, Toaster } from "sonner";
-import { useEffect } from "react";
 
 export const links: LinksFunction = () => [
   {
@@ -43,14 +38,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="manifest" href="/manifest.json" />
         <Links />
       </head>
       <body>
         {children}
         <ScrollRestoration />
         <Scripts />
-        <Toaster position="top-right" closeButton />
       </body>
     </html>
   );
@@ -64,7 +57,7 @@ export const ErrorBoundary = () => {
       <Container2xl className="flex h-svh flex-col">
         <div className="grid h-full place-content-center gap-2 text-center text-neutral-400">
           <NotepadTextDashed className="mx-auto size-12" />
-          <p>{error.statusText}</p>
+          <p className="max-w-sm text-wrap text-center">{error.statusText}</p>
         </div>
       </Container2xl>
     );
@@ -73,7 +66,7 @@ export const ErrorBoundary = () => {
       <Container2xl className="flex h-svh flex-col">
         <div className="grid h-full place-content-center gap-2 text-center text-neutral-400">
           <HeartCrack className="mx-auto size-12" />
-          <p>{error.message}</p>
+          <p className="max-w-sm text-wrap text-center">{error.message}</p>
         </div>
       </Container2xl>
     );
@@ -90,30 +83,6 @@ export const ErrorBoundary = () => {
 };
 
 export default function App() {
-  useSWEffect();
-
-  const location = useLocation();
-
-  const { swUpdate } = usePWAManager();
-
-  useEffect(() => {
-    if (!swUpdate) return;
-
-    if (swUpdate.isUpdateAvailable) {
-      toast("Update Tersedia", {
-        id: "note-update",
-        duration: Infinity,
-        action: {
-          label: <span>Update Aplikasi</span>,
-          onClick: () => {
-            sendSkipWaitingMessage(swUpdate.newWorker!);
-            window.location.reload();
-          },
-        },
-      });
-    }
-  }, [swUpdate, swUpdate.isUpdateAvailable, swUpdate.newWorker]);
-
   return (
     <div className="overflow-hidden">
       <motion.div

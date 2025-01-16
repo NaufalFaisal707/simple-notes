@@ -3,6 +3,7 @@ import {
   ClientLoaderFunctionArgs,
   Link,
   MetaFunction,
+  redirect,
   useFetcher,
   useLoaderData,
 } from "@remix-run/react";
@@ -13,7 +14,6 @@ import { useRef } from "react";
 import Container2xl from "~/components/container-2xl";
 import { Input } from "~/components/ui/input";
 import { getNoteById, updateNoteById } from "~/db";
-import { redirect } from "@remix-pwa/sw";
 
 export const meta: MetaFunction = () => [{ title: "Edit Catatan" }];
 
