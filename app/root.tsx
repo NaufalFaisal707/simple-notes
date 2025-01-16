@@ -15,8 +15,7 @@ import { NotepadTextDashed, HeartCrack } from "lucide-react";
 import Container2xl from "./components/container-2xl";
 import { sendSkipWaitingMessage, useSWEffect } from "@remix-pwa/sw";
 import { usePWAManager } from "@remix-pwa/client";
-import { toast } from "sonner";
-import { Toaster } from "./components/ui/sonner";
+import { toast, Toaster } from "sonner";
 import { useEffect } from "react";
 import { Button } from "./components/ui/button";
 
@@ -41,11 +40,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
       <head>
-        <Meta />
         <meta charSet="utf-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="manifest" href="/manifest.json" />
+        <Meta />
         <Links />
       </head>
       <body>
